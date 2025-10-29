@@ -4,133 +4,152 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SmartVision — Detección en tiempo real</title>
+  <title>SmartVision — Aqua Realistic</title>
 
-  <!-- Fuente -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --bg:#0b0f15; --bg2:#0e1420; --panel:#0f172a; --glass:rgba(17,24,39,.65);
-      --border:#1f2a3a; --muted:#9aa4b2; --text:#e7eef7; --title:#f5f7fb;
-      --accent:#22d3ee; --accent2:#10b981; --danger:#ef4444; --warn:#f59e0b;
-      --shadow: 0 20px 40px rgba(0,0,0,.35);
+    :root {
+      --bg1: #b3ecff;
+      --bg2: #dffffa;
+      --glass: rgba(255,255,255,.6);
+      --border: rgba(255,255,255,.4);
+      --text: #033;
+      --accent1: #00b7ff;
+      --accent2: #10b981;
+      --shadow: 0 12px 35px rgba(0,0,0,.18);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{box-sizing:border-box;}
+    html,body{height:100%;overflow-x:hidden;}
     body{
-      margin:0; font-family:'Inter',system-ui,Segoe UI,Roboto,Arial;
+      margin:0;
+      font-family:'Inter',system-ui,Segoe UI,Roboto,Arial;
       color:var(--text);
-      background:
-        radial-gradient(1400px 700px at 10% -5%, #132033 5%, transparent 55%),
-        radial-gradient(1200px 600px at 110% 10%, #0d192a 0%, transparent 55%),
-        linear-gradient(180deg, var(--bg) 0%, #0a0d12 100%);
+      background:radial-gradient(circle at 30% 20%, #a8e6ff, transparent 40%),
+                 radial-gradient(circle at 70% 80%, #d0f8ff, transparent 50%),
+                 linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 100%);
+      overflow:hidden;
+      position:relative;
     }
 
-    /* Header */
-    .site-top{
-      position:sticky; top:0; z-index:10;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 22px; border-bottom:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(11,15,21,.9), rgba(11,15,21,.65));
-      backdrop-filter: blur(12px);
+    /* BACKGROUND ANIMATION LAYERS */
+    .bubble {
+      position:absolute;
+      bottom:-80px;
+      background:radial-gradient(white 30%, rgba(255,255,255,0.3) 70%);
+      border-radius:50%;
+      opacity:.8;
+      animation:rise 15s linear infinite;
+      pointer-events:none;
     }
-    .brand{display:flex;align-items:center;gap:12px}
+    @keyframes rise {
+      0% {transform:translateY(0) scale(1);opacity:.8;}
+      100% {transform:translateY(-120vh) scale(1.2);opacity:0;}
+    }
+
+    .fish {
+      position:absolute;
+      width:auto;
+      height:auto;
+      animation:swim 22s linear infinite;
+      transform-origin:center;
+      opacity:.95;
+      filter:drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    }
+    .fish svg {
+      width:100px; height:auto;
+      animation:wave 1.8s ease-in-out infinite;
+    }
+    @keyframes wave {
+      0%,100%{transform:translateX(0);}
+      50%{transform:translateX(5px);}
+    }
+    @keyframes swim {
+      0% {transform:translateX(-150px) scaleX(1);}
+      50% {transform:translateX(100vw) scaleX(1);}
+      51% {transform:translateX(100vw) scaleX(-1);}
+      100% {transform:translateX(-150px) scaleX(-1);}
+    }
+
+    /* UI */
+    header.site-top{
+      position:sticky;top:0;z-index:10;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 24px;
+      background:rgba(255,255,255,.5);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .brand{display:flex;align-items:center;gap:14px;}
     .logo{
-      width:36px;height:36px;border-radius:12px;
-      background: conic-gradient(from 180deg at 50% 50%, var(--accent), var(--accent2), #3b82f6);
-      box-shadow: 0 8px 28px rgba(34,211,238,.25);
+      width:40px;height:40px;border-radius:12px;
+      background:conic-gradient(from 0deg,var(--accent1),#00aaff,var(--accent2));
+      box-shadow:0 4px 16px rgba(0,200,255,.4);
     }
-    .title{font-weight:700;color:var(--title);letter-spacing:.2px}
-    .subtitle{color:var(--muted);font-size:.93rem}
-
-    /* Layout */
-    .wrap{max-width:1200px;margin:0 auto;padding:20px;display:grid;grid-template-columns:320px 1fr;gap:20px}
-    @media (max-width: 1024px){ .wrap{grid-template-columns:1fr} }
-
-    /* Card */
+    .title{font-weight:700;font-size:1.3rem;}
+    .subtitle{font-size:.9rem;opacity:.7;}
+    .pill{
+      display:flex;align-items:center;gap:8px;
+      background:var(--glass);border:1px solid var(--border);
+      padding:6px 12px;border-radius:999px;
+      box-shadow:0 2px 6px rgba(255,255,255,.5) inset;
+    }
+    .ok{color:var(--accent2);}
+    main.wrap{
+      max-width:1200px;margin:0 auto;padding:24px;
+      display:grid;grid-template-columns:320px 1fr;gap:24px;position:relative;z-index:5;
+    }
+    @media(max-width:1024px){main.wrap{grid-template-columns:1fr}}
     .card{
-      border:1px solid var(--border); border-radius:16px; overflow:hidden;
-      background:linear-gradient(180deg, var(--panel), var(--bg2));
-      box-shadow: var(--shadow);
+      border:1px solid var(--border);
+      border-radius:20px;
+      background:rgba(255,255,255,.8);
+      backdrop-filter:blur(20px);
+      box-shadow:var(--shadow);
+      overflow:hidden;
     }
     .card-header{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; padding:14px 16px; border-bottom:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+      display:flex;justify-content:space-between;align-items:center;
+      padding:14px 18px;
+      background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.6));
+      border-bottom:1px solid var(--border);
     }
-    .card-header h3{margin:0; font-weight:700}
-    .card-body{padding:16px}
-
-    /* Inputs */
-    label{display:block;font-weight:600;margin:8px 0 6px;color:#cdd6e3}
-    .field{margin-bottom:12px}
-    select,input{
-      width:100%; padding:11px 12px; border-radius:12px; outline:none;
-      border:1px solid var(--border); background:#0b1220; color:var(--text);
-      transition: border-color .15s, box-shadow .2s;
+    .card-body{padding:16px 18px;}
+    label{display:block;margin:8px 0 4px;font-weight:600;}
+    input,select{
+      width:100%;padding:10px 12px;border-radius:12px;
+      border:1px solid var(--border);background:rgba(255,255,255,.85);
     }
-    select:focus, input:focus{border-color:#60a5fa; box-shadow:0 0 0 3px rgba(96,165,250,.2)}
-    .row{display:grid; grid-template-columns:1fr 140px; gap:12px}
-    @media (max-width: 480px){ .row{grid-template-columns:1fr} }
-
-    /* Buttons */
     .btn{
-      display:inline-flex; gap:8px; align-items:center; justify-content:center;
-      padding:12px 14px; border-radius:12px; font-weight:700; cursor:pointer;
-      border:1px solid transparent; background:linear-gradient(135deg,var(--accent),#22a7f0);
-      color:#062b2b; box-shadow: 0 10px 20px rgba(34,211,238,.2);
-      transition: transform .06s ease, box-shadow .2s;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      background:linear-gradient(135deg,var(--accent1),var(--accent2));
+      color:white;border:none;padding:12px;border-radius:12px;
+      cursor:pointer;font-weight:700;
+      box-shadow:0 8px 18px rgba(0,150,200,.25);
     }
-    .btn:hover{ transform: translateY(-1px); box-shadow: 0 16px 30px rgba(34,211,238,.28);}
-
-    /* Status pill */
-    .pill{
-      display:inline-flex; gap:8px; align-items:center; padding:6px 10px;
-      border-radius:999px; border:1px solid var(--border); background:var(--glass);
-      color:#d7deea; font-size:.9rem;
-    }
-    .dot{font-size:14px}
-    .ok{ color: var(--accent2) }
-    .bad{ color: var(--danger) }
-
-    /* Stream */
-    .stream-wrap{position:relative;background:#070b12}
-    .stream{
-      width:100%; display:block; aspect-ratio:16/9; object-fit:cover;
-      background: #05070c;
-    }
-    .toolbar{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      padding:10px 14px; border-top:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
-    }
-    .badge{
-      background:#0b1220; border:1px solid var(--border); color:#d1d7e3;
-      padding:6px 10px; border-radius:999px; font-size:.85rem; font-weight:600;
-    }
-
-    /* Chips */
-    .chips{display:flex;flex-wrap:wrap;gap:10px}
+    .stream{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;}
+    .chips{display:flex;flex-wrap:wrap;gap:10px;}
     .chip{
-      padding:6px 10px; border-radius:999px; background:#0b1220; border:1px solid var(--border);
-      color:#e9f1fa; font-weight:600;
+      padding:6px 10px;border-radius:999px;
+      background:linear-gradient(135deg,var(--accent1),var(--accent2));
+      color:white;font-weight:600;
     }
-
-    /* Hints */
-    .hint{color:var(--muted); font-size:.92rem}
-    footer{opacity:.9;text-align:center;color:var(--muted);font-size:.9rem;padding:10px 0 24px}
+    footer{text-align:center;color:#022;font-size:.9rem;padding:18px 0 28px;opacity:.8;position:relative;z-index:5;}
   </style>
 </head>
 <body>
+  <!-- Dynamic background -->
+  <div id="bubbles"></div>
+  <div id="fishes"></div>
+
   <header class="site-top">
     <div class="brand">
       <div class="logo"></div>
       <div>
         <div class="title">SmartVision</div>
-        <div class="subtitle">Django + OpenCV · YOLO opcional</div>
+        <div class="subtitle">Aqua Realistic — Frutiger Aero</div>
       </div>
     </div>
     <div class="pill">
@@ -140,75 +159,98 @@
   </header>
 
   <main class="wrap">
-    <!-- Controles -->
     <section class="card">
       <div class="card-header">
         <h3>Controles</h3>
         <span id="current-detector" class="badge">face</span>
       </div>
       <div class="card-body">
-        <div class="field">
-          <label for="detector">Detector</label>
-          <select id="detector">
-            <option value="face">Face (OpenCV)</option>
-            <option value="yolo">YOLO (Ultralytics)</option>
-          </select>
-        </div>
+        <label for="detector">Detector</label>
+        <select id="detector">
+          <option value="face">Face (OpenCV)</option>
+          <option value="yolo">YOLO (Ultralytics)</option>
+        </select>
 
-        <div class="field">
-          <label for="classes">Clases (YOLO)</label>
-          <input id="classes" type="text" placeholder="p.ej.: person,cell phone,laptop" />
-          <div class="hint">Déjalo vacío para detectar todas las clases disponibles.</div>
-        </div>
+        <label for="classes">Clases (YOLO)</label>
+        <input id="classes" type="text" placeholder="p.ej.: person,cell phone,laptop" />
 
-        <div class="row">
-          <div class="field">
-            <label for="conf">Confianza</label>
-            <input id="conf" type="number" min="0" max="1" step="0.05" value="0.5" />
-          </div>
-          <div class="field" style="display:flex;align-items:flex-end">
-            <button id="apply" class="btn" style="width:100%">
-              <!-- icono flecha -->
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="opacity:.9">
-                <path d="M13 5l7 7-7 7M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              </svg>
-              Aplicar
-            </button>
-          </div>
-        </div>
+        <label for="conf">Confianza</label>
+        <input id="conf" type="number" min="0" max="1" step="0.05" value="0.5" />
 
-        <p class="hint">Atajo: presiona <b>Enter</b> en “Clases” para aplicar.</p>
+        <button id="apply" class="btn" style="width:100%;margin-top:12px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 5l7 7-7 7M5 12h14"/>
+          </svg>
+          Aplicar
+        </button>
       </div>
     </section>
 
-    <!-- Stream + Indicadores -->
     <section class="card">
       <div class="card-header">
         <h3>Stream</h3>
-        <div class="pill"><b style="margin-right:6px">FPS</b> <span id="fps">–</span></div>
+        <div class="pill"><b>FPS</b> <span id="fps">–</span></div>
       </div>
-
-      <div class="stream-wrap">
-        <img id="stream" class="stream" src="/video_feed?detector=face" alt="video" />
-      </div>
-
-      <div class="toolbar">
-        <span class="badge">Overlay activo</span>
-        <div class="hint">Usa YOLO para objetos; Face para rostros.</div>
-      </div>
-
+      <img id="stream" class="stream" src="/video_feed?detector=face" alt="video" />
       <div class="card-body">
         <h3 style="margin:0 0 10px 0">Indicadores</h3>
         <div id="chips" class="chips">
-          <span class="hint">Sin datos aún…</span>
+          <span class="hint" style="opacity:.7">Sin datos aún…</span>
         </div>
       </div>
     </section>
   </main>
 
-  <footer>© SmartVision — Interfaz mejorada</footer>
+  <footer>© SmartVision — Aqua Realistic 2025</footer>
 
-  <!-- Tu JS (ya existente) -->
   <script src="{% static 'detector/main.js' %}"></script>
+  <script>
+    // Crear burbujas más realistas
+    const bubbleContainer = document.getElementById("bubbles");
+    for (let i = 0; i < 40; i++) {
+      const b = document.createElement("div");
+      b.classList.add("bubble");
+      const s = Math.random() * 25 + 8;
+      b.style.width = b.style.height = s + "px";
+      b.style.left = Math.random() * 100 + "vw";
+      b.style.animationDuration = 10 + Math.random() * 10 + "s";
+      b.style.animationDelay = Math.random() * 8 + "s";
+      bubbleContainer.appendChild(b);
+    }
+
+    // Peces con gradiente y variedad de tamaños/velocidades
+    const fishes = document.getElementById("fishes");
+    const gradients = [
+      "url(#grad1)", "url(#grad2)", "url(#grad3)", "url(#grad4)"
+    ];
+    for (let i = 0; i < 6; i++) {
+      const f = document.createElement("div");
+      f.classList.add("fish");
+      f.style.bottom = (10 + Math.random() * 70) + "%";
+      f.style.animationDuration = (15 + Math.random() * 12) + "s";
+      f.style.opacity = 0.7 + Math.random() * 0.3;
+      f.innerHTML = `
+        <svg viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00c6ff"/><stop offset="100%" stop-color="#0072ff"/>
+            </linearGradient>
+            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff9966"/><stop offset="100%" stop-color="#ff5e62"/>
+            </linearGradient>
+            <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#a8ff78"/><stop offset="100%" stop-color="#78ffd6"/>
+            </linearGradient>
+            <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fbd3e9"/><stop offset="100%" stop-color="#bb377d"/>
+            </linearGradient>
+          </defs>
+          <path d="M2 16 Q10 4, 28 6 Q40 6, 62 16 Q40 26, 28 26 Q10 28, 2 16Z" fill="${gradients[i%4]}" stroke="rgba(0,0,0,.25)" stroke-width="1"/>
+          <circle cx="12" cy="14" r="2.2" fill="white"/>
+          <circle cx="12" cy="14" r="1" fill="black"/>
+        </svg>`;
+      fishes.appendChild(f);
+    }
+  </script>
 </body>
 </html>
